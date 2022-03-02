@@ -39,11 +39,13 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: PageView(
-        physics: const NeverScrollableScrollPhysics(),
-        onPageChanged: onPageChanged,
-        controller: pageController,
-        children: homeScreenList,
+      body: SafeArea(
+        child: PageView(
+          physics: const NeverScrollableScrollPhysics(),
+          onPageChanged: onPageChanged,
+          controller: pageController,
+          children: homeScreenList,
+        ),
       ),
       bottomNavigationBar: CupertinoTabBar(
         backgroundColor: scaffoldBackground,

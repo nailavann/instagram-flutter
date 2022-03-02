@@ -18,17 +18,6 @@ class UserModel {
     required this.following,
   });
 
-  Map<String, dynamic> toMap() {
-    return {
-      'email': email,
-      'uid': uid,
-      'photoUrl': photoUrl,
-      'username': username,
-      'followers': followers,
-      'following': following,
-    };
-  }
-
   factory UserModel.fromSnap(DocumentSnapshot snap) {
     var snapshot = snap.data() as Map<String, dynamic>;
 

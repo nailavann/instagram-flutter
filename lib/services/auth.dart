@@ -60,7 +60,7 @@ class AuthServices {
       String email, String password, BuildContext context) async {
     String res = "error";
     try {
-      var user = await _firebaseAuth.signInWithEmailAndPassword(
+      await _firebaseAuth.signInWithEmailAndPassword(
           email: email, password: password);
       res = "success";
     } on FirebaseAuthException catch (e) {
