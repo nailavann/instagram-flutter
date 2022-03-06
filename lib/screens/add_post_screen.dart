@@ -64,35 +64,43 @@ class _AddPostScreenState extends State<AddPostScreen> {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            crossAxisAlignment: CrossAxisAlignment.start,
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Padding(
-                padding: const EdgeInsets.only(left: 8.0, right: 30),
+                padding: const EdgeInsets.only(left: 8.0, right: 8, top: 15),
                 child: CircleAvatar(
+                  radius: 35,
                   backgroundImage: NetworkImage(user!.photoUrl),
                 ),
               ),
-              Expanded(
-                child: SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.3,
-                  child: TextField(
-                    controller: _descriptionController,
-                    decoration: const InputDecoration(
-                        border: InputBorder.none,
-                        hintText: "Açıklama giriniz..."),
-                    maxLines: 6,
-                  ),
-                ),
+              const SizedBox(
+                height: 40,
               ),
-              _addedImage == null
-                  ? Container()
-                  : Expanded(
-                      child: Image(image: MemoryImage(_addedImage!)),
-                    )
+              TextField(
+                controller: _descriptionController,
+                decoration: const InputDecoration(
+                    focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white)),
+                    border: OutlineInputBorder(),
+                    hintText: "Açıklama giriniz..."),
+              ),
             ],
           ),
+          const SizedBox(
+            height: 20,
+          ),
+          _addedImage == null
+              ? Container()
+              : Expanded(
+                  child: Container(
+                      decoration: BoxDecoration(
+                          border: Border.all(color: Colors.white)),
+                      child: Image(
+                        image: MemoryImage(_addedImage!),
+                        fit: BoxFit.cover,
+                      )),
+                ),
           //image button
           Center(
             child: Row(
@@ -128,12 +136,19 @@ class _AddPostScreenState extends State<AddPostScreen> {
           SizedBox(
               width: double.infinity,
               child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                      primary: const Color.fromARGB(255, 32, 32, 32)),
                   onPressed: () {
                     postUpload(user);
                   },
                   child: _isLoading == false
-                      ? const Text("Paylaş")
-                      : const Center(child: CircularProgressIndicator())))
+                      ? const Text(
+                          "Paylaş",
+                          style: TextStyle(color: Colors.white),
+                        )
+                      : const Center(
+                          child:
+                              CircularProgressIndicator(color: Colors.white))))
         ],
       ),
     );

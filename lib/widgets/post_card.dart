@@ -19,11 +19,13 @@ class PostCard extends StatefulWidget {
 class _PostCardState extends State<PostCard> {
   bool likeAnimating = false;
   int commentsLength = 0;
+  List likesList = [];
 
   @override
   void initState() {
     super.initState();
     getCommentLength();
+    deneme();
   }
 
   getCommentLength() async {
@@ -33,13 +35,22 @@ class _PostCardState extends State<PostCard> {
         .collection('comments')
         .get();
 
-    commentsLength = snapshot.docs.length;
+    setState(() {
+      commentsLength = snapshot.docs.length;
+    });
+  }
+
+  deneme() {
+    widget.post['likes'].forEach((element) {
+      setState(() {
+        likesList.add(element);
+      });
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     UserModel? user = Provider.of<UserProvider>(context).getUser;
-
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 10),
       child: Column(
@@ -86,7 +97,7 @@ class _PostCardState extends State<PostCard> {
           GestureDetector(
             onDoubleTap: () async {
               await FirestoreServices().likesPost(
-                  widget.post['postId'], user!.username, widget.post['likes']);
+                  widget.post['postId'], user!.uid, widget.post['likes']);
               setState(() {
                 likeAnimating = true;
               });
@@ -126,16 +137,16 @@ class _PostCardState extends State<PostCard> {
           Row(
             children: [
               LikeAnimation(
-                isAnimating: widget.post['likes'].contains(user?.username),
+                isAnimating: widget.post['likes'].contains(user?.uid),
                 smallLike: true,
                 child: IconButton(
                   onPressed: () async {
-                    await FirestoreServices().likesPost(widget.post['postId'],
-                        user!.username, widget.post['likes']);
+                    await FirestoreServices().likesPost(
+                        widget.post['postId'], user!.uid, widget.post['likes']);
                   },
                   icon: Icon(
                     Icons.favorite,
-                    color: widget.post['likes'].contains(user?.username)
+                    color: widget.post['likes'].contains(user?.uid)
                         ? Colors.red
                         : Colors.white,
                   ),
@@ -148,7 +159,6 @@ class _PostCardState extends State<PostCard> {
               IconButton(onPressed: () {}, icon: const Icon(Icons.send))
             ],
           ),
-          //DESCRIPTION
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: Column(
@@ -161,15 +171,33 @@ class _PostCardState extends State<PostCard> {
                         context: context,
                         builder: (context) {
                           return Dialog(
-                            child: ListView.builder(
-                              itemCount: widget.post['likes'].length,
-                              itemBuilder: (context, index) {
-                                if (widget.post['likes'][index] != null) {
-                                  return Text(widget.post['likes'][index]);
-                                }
-                                return Container();
-                              },
-                            ),
+                            child: StreamBuilder(
+                                stream: FirebaseFirestore.instance
+                                    .collection('user')
+                                    .where('uid',
+                                        isEqualTo: widget.post['likes'])
+                                    .snapshots(),
+                                builder: (context, AsyncSnapshot snapshot) {
+                                  if (!snapshot.hasData) {
+                                    return Center(
+                                      child: CircularProgressIndicator(),
+                                    );
+                                  }
+                                  //var docs = snapshot.data!.docs;
+                                  // final user = docs[0];
+                                  return ListView.builder(
+                                    itemCount: widget.post['likes'].length,
+                                    itemBuilder: (context, index) {
+                                      final user = snapshot.data![index];
+                                      return ListTile(
+                                        leading: CircleAvatar(
+                                            backgroundImage: NetworkImage(
+                                                user['profImage'])),
+                                        title: Text(user['username']),
+                                      );
+                                    },
+                                  );
+                                }),
                           );
                         });
                   },
@@ -183,6 +211,7 @@ class _PostCardState extends State<PostCard> {
                 const SizedBox(
                   height: 5,
                 ),
+                //DESCRIPTION
                 RichText(
                   text: TextSpan(
                     children: <TextSpan>[

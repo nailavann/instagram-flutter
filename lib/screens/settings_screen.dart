@@ -14,17 +14,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-          child: ElevatedButton(
-        child: Text("Çıkış Yap"),
-        onPressed: () async {
-          await AuthServices().logOut();
-          Navigator.pushReplacement(context, MaterialPageRoute(
-            builder: (context) {
-              return const LoginScreen();
-            },
-          ));
-        },
-      )),
+        child: ElevatedButton(
+          child: Text("Çıkış Yap"),
+          onPressed: () async {
+            await AuthServices().logOut();
+
+            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(
+              builder: (context) {
+                return const LoginScreen();
+              },
+            ), (route) => false);
+          },
+        ),
+      ),
     );
   }
 }

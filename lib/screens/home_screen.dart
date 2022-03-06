@@ -1,7 +1,13 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:instagram_flutter/screens/post_screen.dart';
+import 'package:instagram_flutter/screens/search_screen.dart';
+import 'package:instagram_flutter/screens/settings_screen.dart';
 import 'package:instagram_flutter/utils/color.dart';
-import 'package:instagram_flutter/utils/utils.dart';
+
+import 'add_post_screen.dart';
+import 'profile_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -27,7 +33,9 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void navigationTapped(int page) {
-    pageController.jumpToPage(page);
+    setState(() {
+      pageController.jumpToPage(page);
+    });
   }
 
   void onPageChanged(int page) {
@@ -41,11 +49,16 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       body: SafeArea(
         child: PageView(
-          physics: const NeverScrollableScrollPhysics(),
-          onPageChanged: onPageChanged,
-          controller: pageController,
-          children: homeScreenList,
-        ),
+            physics: const NeverScrollableScrollPhysics(),
+            onPageChanged: onPageChanged,
+            controller: pageController,
+            children: [
+              const PostScreen(),
+              const SearchScreen(),
+              const AddPostScreen(),
+              ProfileScreen(uid: FirebaseAuth.instance.currentUser!.uid),
+              const SettingsScreen(),
+            ]),
       ),
       bottomNavigationBar: CupertinoTabBar(
         backgroundColor: scaffoldBackground,
@@ -55,35 +68,30 @@ class _HomeScreenState extends State<HomeScreen> {
               Icons.home,
               color: _page == 0 ? Colors.white : Colors.grey,
             ),
-            label: '',
           ),
           BottomNavigationBarItem(
             icon: Icon(
               Icons.search,
               color: _page == 1 ? Colors.white : Colors.grey,
             ),
-            label: '',
           ),
           BottomNavigationBarItem(
             icon: Icon(
               Icons.add_circle,
               color: _page == 2 ? Colors.white : Colors.grey,
             ),
-            label: '',
           ),
           BottomNavigationBarItem(
             icon: Icon(
               Icons.person,
               color: _page == 3 ? Colors.white : Colors.grey,
             ),
-            label: '',
           ),
           BottomNavigationBarItem(
             icon: Icon(
               Icons.settings,
               color: _page == 4 ? Colors.white : Colors.grey,
             ),
-            label: '',
           )
         ],
         onTap: navigationTapped,

@@ -1,6 +1,8 @@
 import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:instagram_flutter/models/user_model.dart';
 
 import 'package:instagram_flutter/services/storage.dart';
@@ -35,15 +37,29 @@ class FirestoreServices {
     return res;
   }
 
-  Future<void> likesPost(String postId, String username, List likes) async {
+  Future<void> editProfile(
+      dynamic userData, String bioText, String usernameText) async {
     try {
-      if (likes.contains(username)) {
+      await _firebaseFirestore.collection('user').doc(userData['uid']).update(
+        {
+          'bio': bioText.isEmpty ? userData['bio'] : bioText,
+          'username': usernameText.isEmpty ? userData['username'] : usernameText
+        },
+      );
+    } catch (err) {
+      print(err.toString());
+    }
+  }
+
+  Future<void> likesPost(String postId, String uid, List likes) async {
+    try {
+      if (likes.contains(uid)) {
         await _firebaseFirestore.collection('posts').doc(postId).update({
-          'likes': FieldValue.arrayRemove([username])
+          'likes': FieldValue.arrayRemove([uid])
         });
       } else {
         await _firebaseFirestore.collection('posts').doc(postId).update({
-          'likes': FieldValue.arrayUnion([username])
+          'likes': FieldValue.arrayUnion([uid])
         });
       }
     } catch (err) {
@@ -68,6 +84,39 @@ class FirestoreServices {
         'uid': uid,
         'date': DateTime.now()
       });
+    } catch (err) {
+      print(err.toString());
+    }
+  }
+
+  Future<void> followUsers(String userDataId) async {
+    try {
+      var snapshot = await FirebaseFirestore.instance
+          .collection('user')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .get();
+      List following = snapshot.data()!['following'];
+
+      if (following.contains(userDataId)) {
+        await _firebaseFirestore.collection('user').doc(userDataId).update({
+          'followers':
+              FieldValue.arrayRemove([FirebaseAuth.instance.currentUser!.uid])
+        });
+
+        await _firebaseFirestore.collection('user').doc(userDataId).update({
+          'following':
+              FieldValue.arrayRemove([FirebaseAuth.instance.currentUser!.uid])
+        });
+      } else {
+        await _firebaseFirestore.collection('user').doc(userDataId).update({
+          'followers':
+              FieldValue.arrayUnion([FirebaseAuth.instance.currentUser!.uid])
+        });
+        await _firebaseFirestore.collection('user').doc(userDataId).update({
+          'following':
+              FieldValue.arrayUnion([FirebaseAuth.instance.currentUser!.uid])
+        });
+      }
     } catch (err) {
       print(err.toString());
     }
