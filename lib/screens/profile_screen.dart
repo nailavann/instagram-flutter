@@ -180,43 +180,47 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       const Divider(
                         color: Colors.grey,
                       ),
-                      FutureBuilder(
-                          future: FirebaseFirestore.instance
-                              .collection('posts')
-                              .where('uid', isEqualTo: widget.uid)
-                              .get(),
-                          builder: (context, AsyncSnapshot snapshot) {
-                            if (snapshot.hasData) {
-                              return GridView.builder(
-                                  shrinkWrap: true,
-                                  itemCount: snapshot.data.docs.length,
-                                  gridDelegate:
-                                      const SliverGridDelegateWithFixedCrossAxisCount(
-                                          crossAxisCount: 3),
-                                  itemBuilder: (context, index) {
-                                    var post = snapshot.data.docs[index];
-                                    return InkWell(
-                                      onTap: () {
-                                        Navigator.push(context,
-                                            MaterialPageRoute(
-                                          builder: (context) {
-                                            return PhotoDetailScreen(
-                                                post: post);
+                      isFollowing ||
+                              FirebaseAuth.instance.currentUser!.uid ==
+                                  userData['uid']
+                          ? FutureBuilder(
+                              future: FirebaseFirestore.instance
+                                  .collection('posts')
+                                  .where('uid', isEqualTo: widget.uid)
+                                  .get(),
+                              builder: (context, AsyncSnapshot snapshot) {
+                                if (snapshot.hasData) {
+                                  return GridView.builder(
+                                      shrinkWrap: true,
+                                      itemCount: snapshot.data.docs.length,
+                                      gridDelegate:
+                                          const SliverGridDelegateWithFixedCrossAxisCount(
+                                              crossAxisCount: 3),
+                                      itemBuilder: (context, index) {
+                                        var post = snapshot.data.docs[index];
+                                        return InkWell(
+                                          onTap: () {
+                                            Navigator.push(context,
+                                                MaterialPageRoute(
+                                              builder: (context) {
+                                                return PhotoDetailScreen(
+                                                    post: post);
+                                              },
+                                            ));
                                           },
-                                        ));
-                                      },
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(2.0),
-                                        child: Image.network(
-                                          post['postUrl'],
-                                          fit: BoxFit.cover,
-                                        ),
-                                      ),
-                                    );
-                                  });
-                            }
-                            return Container();
-                          })
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(2.0),
+                                            child: Image.network(
+                                              post['postUrl'],
+                                              fit: BoxFit.cover,
+                                            ),
+                                          ),
+                                        );
+                                      });
+                                }
+                                return Container();
+                              })
+                          : Container()
                     ],
                   ),
                 ),

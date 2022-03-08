@@ -25,7 +25,7 @@ class UserFollowersScreen extends StatelessWidget {
       ),
       body: (user['followers'] as List).isEmpty
           ? const Center(
-              child: Text("Takip edilen yok..."),
+              child: Text("Takipçi yok..."),
             )
           : FutureBuilder(
               future: FirebaseFirestore.instance

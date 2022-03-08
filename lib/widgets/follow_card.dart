@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:instagram_flutter/screens/profile_screen.dart';
 
 class FollowCard extends StatelessWidget {
   final user;
@@ -6,14 +7,23 @@ class FollowCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 4.0, right: 4, top: 8, bottom: 8),
-      child: ListTile(
-        leading: CircleAvatar(
-          radius: 27,
-          backgroundImage: NetworkImage(user['photoUrl']),
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(context, MaterialPageRoute(
+          builder: (context) {
+            return ProfileScreen(uid: user['uid']);
+          },
+        ));
+      },
+      child: Padding(
+        padding: const EdgeInsets.only(left: 4.0, right: 4, top: 8, bottom: 8),
+        child: ListTile(
+          leading: CircleAvatar(
+            radius: 27,
+            backgroundImage: NetworkImage(user['photoUrl']),
+          ),
+          title: Text(user['username']),
         ),
-        title: Text(user['username']),
       ),
     );
   }

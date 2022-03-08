@@ -10,7 +10,6 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import '../screens/likes_screen.dart';
-import 'likes_card.dart';
 
 class PostCard extends StatefulWidget {
   final post;
@@ -28,6 +27,11 @@ class _PostCardState extends State<PostCard> {
   void initState() {
     super.initState();
     getCommentLength();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   getCommentLength() async {

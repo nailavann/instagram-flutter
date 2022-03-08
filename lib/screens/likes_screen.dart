@@ -20,25 +20,29 @@ class _LikesScreenState extends State<LikesScreen> {
           title: const Text("Beğenme"),
           backgroundColor: scaffoldBackground,
         ),
-        body: StreamBuilder<QuerySnapshot>(
-          stream: FirebaseFirestore.instance
-              .collection('user')
-              .where('uid', whereIn: (widget.post['likes']))
-              .snapshots(),
-          builder: (context, AsyncSnapshot snapshot) {
-            if (!snapshot.hasData) {
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            }
-            return ListView.builder(
-              itemCount: snapshot.data!.docs.length,
-              itemBuilder: (context, index) {
-                final user = snapshot.data!.docs[index];
-                return LikesCard(user: user);
-              },
-            );
-          },
-        ));
+        body: widget.post['likes'].length > 0
+            ? StreamBuilder<QuerySnapshot>(
+                stream: FirebaseFirestore.instance
+                    .collection('user')
+                    .where('uid', whereIn: (widget.post['likes']))
+                    .snapshots(),
+                builder: (context, AsyncSnapshot snapshot) {
+                  if (!snapshot.hasData) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+                  return ListView.builder(
+                    itemCount: snapshot.data!.docs.length,
+                    itemBuilder: (context, index) {
+                      final user = snapshot.data!.docs[index];
+                      return LikesCard(user: user);
+                    },
+                  );
+                },
+              )
+            : const Center(
+                child: Text("Beğeni yok"),
+              ));
   }
 }
