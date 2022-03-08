@@ -3,10 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:instagram_flutter/models/user_model.dart';
 import 'package:instagram_flutter/providers/user_provider.dart';
 import 'package:instagram_flutter/screens/comments_screen.dart';
+import 'package:instagram_flutter/screens/profile_screen.dart';
 import 'package:instagram_flutter/services/firestore.dart';
 import 'package:instagram_flutter/widgets/like_animation.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+
+import '../screens/likes_screen.dart';
+import 'likes_card.dart';
 
 class PostCard extends StatefulWidget {
   final post;
@@ -19,13 +23,11 @@ class PostCard extends StatefulWidget {
 class _PostCardState extends State<PostCard> {
   bool likeAnimating = false;
   int commentsLength = 0;
-  List likesList = [];
 
   @override
   void initState() {
     super.initState();
     getCommentLength();
-    deneme();
   }
 
   getCommentLength() async {
@@ -37,14 +39,6 @@ class _PostCardState extends State<PostCard> {
 
     setState(() {
       commentsLength = snapshot.docs.length;
-    });
-  }
-
-  deneme() {
-    widget.post['likes'].forEach((element) {
-      setState(() {
-        likesList.add(element);
-      });
     });
   }
 
@@ -60,16 +54,30 @@ class _PostCardState extends State<PostCard> {
             padding: const EdgeInsets.only(bottom: 10),
             child: Row(
               children: [
-                CircleAvatar(
-                  radius: 20,
-                  backgroundImage: NetworkImage(widget.post['profImage']),
-                ),
                 Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 8.0),
-                    child: Text(
-                      widget.post['username'],
-                      style: const TextStyle(fontWeight: FontWeight.bold),
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.push(context, MaterialPageRoute(
+                        builder: (context) {
+                          return ProfileScreen(uid: widget.post['uid']);
+                        },
+                      ));
+                    },
+                    child: Row(
+                      children: [
+                        CircleAvatar(
+                          radius: 20,
+                          backgroundImage:
+                              NetworkImage(widget.post['profImage']),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(left: 8.0),
+                          child: Text(
+                            widget.post['username'],
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
@@ -167,39 +175,11 @@ class _PostCardState extends State<PostCard> {
               children: [
                 GestureDetector(
                   onTap: () {
-                    showDialog(
-                        context: context,
-                        builder: (context) {
-                          return Dialog(
-                            child: StreamBuilder(
-                                stream: FirebaseFirestore.instance
-                                    .collection('user')
-                                    .where('uid',
-                                        isEqualTo: widget.post['likes'])
-                                    .snapshots(),
-                                builder: (context, AsyncSnapshot snapshot) {
-                                  if (!snapshot.hasData) {
-                                    return Center(
-                                      child: CircularProgressIndicator(),
-                                    );
-                                  }
-                                  //var docs = snapshot.data!.docs;
-                                  // final user = docs[0];
-                                  return ListView.builder(
-                                    itemCount: widget.post['likes'].length,
-                                    itemBuilder: (context, index) {
-                                      final user = snapshot.data![index];
-                                      return ListTile(
-                                        leading: CircleAvatar(
-                                            backgroundImage: NetworkImage(
-                                                user['profImage'])),
-                                        title: Text(user['username']),
-                                      );
-                                    },
-                                  );
-                                }),
-                          );
-                        });
+                    Navigator.push(context, MaterialPageRoute(
+                      builder: (context) {
+                        return LikesScreen(post: widget.post);
+                      },
+                    ));
                   },
                   child: Align(
                     alignment: Alignment.topLeft,

@@ -89,32 +89,26 @@ class FirestoreServices {
     }
   }
 
-  Future<void> followUsers(String userDataId) async {
+  Future<void> followUsers(String uid, String followId) async {
     try {
-      var snapshot = await FirebaseFirestore.instance
-          .collection('user')
-          .doc(FirebaseAuth.instance.currentUser!.uid)
-          .get();
+      var snapshot =
+          await FirebaseFirestore.instance.collection('user').doc(uid).get();
       List following = snapshot.data()!['following'];
 
-      if (following.contains(userDataId)) {
-        await _firebaseFirestore.collection('user').doc(userDataId).update({
-          'followers':
-              FieldValue.arrayRemove([FirebaseAuth.instance.currentUser!.uid])
+      if (following.contains(followId)) {
+        await _firebaseFirestore.collection('user').doc(followId).update({
+          'followers': FieldValue.arrayRemove([uid])
         });
 
-        await _firebaseFirestore.collection('user').doc(userDataId).update({
-          'following':
-              FieldValue.arrayRemove([FirebaseAuth.instance.currentUser!.uid])
+        await _firebaseFirestore.collection('user').doc(uid).update({
+          'following': FieldValue.arrayRemove([followId])
         });
       } else {
-        await _firebaseFirestore.collection('user').doc(userDataId).update({
-          'followers':
-              FieldValue.arrayUnion([FirebaseAuth.instance.currentUser!.uid])
+        await _firebaseFirestore.collection('user').doc(followId).update({
+          'followers': FieldValue.arrayUnion([uid])
         });
-        await _firebaseFirestore.collection('user').doc(userDataId).update({
-          'following':
-              FieldValue.arrayUnion([FirebaseAuth.instance.currentUser!.uid])
+        await _firebaseFirestore.collection('user').doc(uid).update({
+          'following': FieldValue.arrayUnion([followId])
         });
       }
     } catch (err) {

@@ -1,8 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:instagram_flutter/screens/edit_profile_screen.dart';
 import 'package:instagram_flutter/screens/photo_detail_screen.dart';
+import 'package:instagram_flutter/screens/user_follower_screen.dart';
+import 'package:instagram_flutter/screens/user_following_screen.dart';
 import 'package:instagram_flutter/services/firestore.dart';
 import 'package:instagram_flutter/utils/color.dart';
 import 'package:instagram_flutter/widgets/follow_button.dart';
@@ -17,7 +20,6 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   var userData = {};
-  var postData;
   int postLength = 0;
   int followers = 0;
   int following = 0;
@@ -45,6 +47,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           .get();
 
       postLength = postSnap.docs.length;
+
       followers = userData['followers'].length;
       following = userData['following'].length;
       isFollowing = userData['followers']
@@ -88,8 +91,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       MainAxisAlignment.spaceEvenly,
                                   children: [
                                     dataColumn(postLength, 'Gönderi'),
-                                    dataColumn(followers, 'Takipçi'),
-                                    dataColumn(following, 'Takip')
+                                    GestureDetector(
+                                        onTap: () {
+                                          Navigator.push(context,
+                                              MaterialPageRoute(
+                                            builder: (context) {
+                                              return UserFollowersScreen(
+                                                  user: userData);
+                                            },
+                                          ));
+                                        },
+                                        child:
+                                            dataColumn(followers, 'Takipçi')),
+                                    GestureDetector(
+                                        onTap: () {
+                                          Navigator.push(context,
+                                              MaterialPageRoute(
+                                            builder: (context) {
+                                              return UserFollowingScreen(
+                                                  user: userData);
+                                            },
+                                          ));
+                                        },
+                                        child: dataColumn(following, 'Takip'))
                                   ],
                                 ),
                                 FirebaseAuth.instance.currentUser!.uid ==
@@ -110,17 +134,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                             255, 32, 32, 32))
                                     : isFollowing
                                         ? FollowButton(
-                                            func: () {
-                                              FirestoreServices()
-                                                  .followUsers(userData['uid']);
+                                            func: () async {
+                                              await FirestoreServices()
+                                                  .followUsers(
+                                                      FirebaseAuth.instance
+                                                          .currentUser!.uid,
+                                                      userData['uid']);
+                                              setState(() {
+                                                isFollowing = false;
+                                                followers--;
+                                              });
                                             },
                                             text: "Takiptesin",
                                             color: const Color.fromARGB(
                                                 255, 32, 32, 32))
                                         : FollowButton(
-                                            func: () {
-                                              FirestoreServices()
-                                                  .followUsers(userData['uid']);
+                                            func: () async {
+                                              await FirestoreServices()
+                                                  .followUsers(
+                                                      FirebaseAuth.instance
+                                                          .currentUser!.uid,
+                                                      userData['uid']);
+                                              setState(() {});
+                                              isFollowing = true;
+                                              followers++;
                                             },
                                             text: "Takip et",
                                             color: Colors.blue)
