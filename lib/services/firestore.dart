@@ -29,6 +29,7 @@ class FirestoreServices {
         'date': DateTime.now(),
         'profImage': profImage,
         'likes': [],
+        'saves': []
       });
       res = "success";
     } catch (err) {
@@ -60,6 +61,22 @@ class FirestoreServices {
       } else {
         await _firebaseFirestore.collection('posts').doc(postId).update({
           'likes': FieldValue.arrayUnion([uid])
+        });
+      }
+    } catch (err) {
+      print(err.toString());
+    }
+  }
+
+  Future<void> savesPost(String postId, String uid, List saves) async {
+    try {
+      if (saves.contains(uid)) {
+        await _firebaseFirestore.collection('posts').doc(postId).update({
+          'saves': FieldValue.arrayRemove([uid])
+        });
+      } else {
+        await _firebaseFirestore.collection('posts').doc(postId).update({
+          'saves': FieldValue.arrayUnion([uid])
         });
       }
     } catch (err) {

@@ -136,8 +136,6 @@ class _AddPostScreenState extends State<AddPostScreen> {
           SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                      primary: const Color.fromARGB(255, 32, 32, 32)),
                   onPressed: () {
                     postUpload(user);
                   },

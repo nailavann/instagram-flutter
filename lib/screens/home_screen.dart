@@ -3,7 +3,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:instagram_flutter/screens/post_screen.dart';
 import 'package:instagram_flutter/screens/search_screen.dart';
-import 'package:instagram_flutter/screens/settings_screen.dart';
 import 'package:instagram_flutter/utils/color.dart';
 
 import 'add_post_screen.dart';
@@ -57,7 +56,6 @@ class _HomeScreenState extends State<HomeScreen> {
               const SearchScreen(),
               const AddPostScreen(),
               ProfileScreen(uid: FirebaseAuth.instance.currentUser!.uid),
-              const SettingsScreen(),
             ]),
       ),
       bottomNavigationBar: CupertinoTabBar(
@@ -87,12 +85,6 @@ class _HomeScreenState extends State<HomeScreen> {
               color: _page == 3 ? Colors.white : Colors.grey,
             ),
           ),
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.settings,
-              color: _page == 4 ? Colors.white : Colors.grey,
-            ),
-          )
         ],
         onTap: navigationTapped,
       ),

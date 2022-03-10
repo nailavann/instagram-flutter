@@ -9,28 +9,31 @@ class PostModel {
   final String postUrl;
   final String profImage;
   final List likes;
-  PostModel({
-    required this.description,
-    required this.uid,
-    required this.username,
-    required this.postId,
-    required this.date,
-    required this.postUrl,
-    required this.profImage,
-    required this.likes,
-  });
+  final List saves;
+  PostModel(
+      {required this.description,
+      required this.uid,
+      required this.username,
+      required this.postId,
+      required this.date,
+      required this.postUrl,
+      required this.profImage,
+      required this.likes,
+      required this.saves});
 
   factory PostModel.fromSnap(DocumentSnapshot snap) {
     var snapshot = snap.data() as Map<String, dynamic>;
 
     return PostModel(
-        description: snapshot['description'] ?? '',
-        uid: snapshot['uid'] ?? '',
-        username: snapshot['username'] ?? '',
-        postId: snapshot['postId'] ?? '',
-        date: (snapshot['date']),
-        postUrl: snapshot['postUrl'],
-        profImage: snapshot['profImage'],
-        likes: List.from(snapshot['likes']));
+      description: snapshot['description'] ?? '',
+      uid: snapshot['uid'] ?? '',
+      username: snapshot['username'] ?? '',
+      postId: snapshot['postId'] ?? '',
+      date: (snapshot['date']),
+      postUrl: snapshot['postUrl'],
+      profImage: snapshot['profImage'],
+      likes: List.from(snapshot['likes']),
+      saves: List.from(snapshot['saves']),
+    );
   }
 }

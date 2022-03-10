@@ -20,10 +20,15 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-        providers: [ChangeNotifierProvider(create: (_) => UserProvider())],
+        providers: [
+          ChangeNotifierProvider(create: (_) => UserProvider()),
+        ],
         child: MaterialApp(
-            theme: ThemeData.dark()
-                .copyWith(scaffoldBackgroundColor: scaffoldBackground),
+            theme: ThemeData.dark().copyWith(
+                scaffoldBackgroundColor: scaffoldBackground,
+                elevatedButtonTheme: ElevatedButtonThemeData(
+                    style: ElevatedButton.styleFrom(
+                        primary: const Color.fromARGB(255, 32, 32, 32)))),
             debugShowCheckedModeBanner: false,
             home: Scaffold(
               body: StreamBuilder(

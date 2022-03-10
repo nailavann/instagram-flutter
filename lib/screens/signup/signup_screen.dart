@@ -83,14 +83,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
             width: double.infinity,
             child:
                 Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-              SvgPicture.asset(
-                "assets/img/Instagram_logo.svg",
-                height: 64,
-                color: Colors.white,
-              ),
-              const SizedBox(
-                height: 50,
-              ),
               Stack(
                 children: [
                   _profilImage != null

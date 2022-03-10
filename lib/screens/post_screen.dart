@@ -31,19 +31,6 @@ class _PostScreenState extends State<PostScreen> {
   Widget build(BuildContext context) {
     UserModel? user = Provider.of<UserProvider>(context).getUser;
     return Scaffold(
-        appBar: AppBar(
-          backgroundColor: scaffoldBackground,
-          centerTitle: false,
-          title: SvgPicture.asset(
-            'assets/img/Instagram_logo.svg',
-            height: 50,
-            color: Colors.white,
-          ),
-          actions: [
-            IconButton(
-                onPressed: () {}, icon: const Icon(Icons.message_outlined)),
-          ],
-        ),
         body: user == null
             ? const Center(
                 child: CircularProgressIndicator(),

@@ -21,6 +21,7 @@ class PostCard extends StatefulWidget {
 
 class _PostCardState extends State<PostCard> {
   bool likeAnimating = false;
+  bool savesAnimating = false;
   int commentsLength = 0;
 
   @override
@@ -148,27 +149,50 @@ class _PostCardState extends State<PostCard> {
           //ICONBUTTONS
           Row(
             children: [
-              LikeAnimation(
-                isAnimating: widget.post['likes'].contains(user?.uid),
-                smallLike: true,
-                child: IconButton(
-                  onPressed: () async {
-                    await FirestoreServices().likesPost(
-                        widget.post['postId'], user!.uid, widget.post['likes']);
-                  },
-                  icon: Icon(
-                    Icons.favorite,
-                    color: widget.post['likes'].contains(user?.uid)
-                        ? Colors.red
-                        : Colors.white,
-                  ),
+              Expanded(
+                child: Row(
+                  children: [
+                    LikeAnimation(
+                      isAnimating: widget.post['likes'].contains(user?.uid),
+                      smallLike: true,
+                      child: IconButton(
+                        onPressed: () async {
+                          await FirestoreServices().likesPost(
+                              widget.post['postId'],
+                              user!.uid,
+                              widget.post['likes']);
+                        },
+                        icon: Icon(
+                          Icons.favorite,
+                          color: widget.post['likes'].contains(user?.uid)
+                              ? Colors.red
+                              : Colors.white,
+                        ),
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: () {},
+                      icon: const Icon(Icons.comment),
+                    ),
+                    IconButton(
+                      onPressed: () {},
+                      icon: const Icon(Icons.send),
+                    ),
+                  ],
                 ),
               ),
               IconButton(
-                onPressed: () {},
-                icon: const Icon(Icons.comment),
+                onPressed: () async {
+                  await FirestoreServices().savesPost(
+                      widget.post['postId'], user!.uid, widget.post['saves']);
+                },
+                icon: Icon(
+                  Icons.bookmark_border,
+                  color: widget.post['saves'].contains(user!.uid)
+                      ? Colors.blue
+                      : Colors.white,
+                ),
               ),
-              IconButton(onPressed: () {}, icon: const Icon(Icons.send))
             ],
           ),
           Padding(

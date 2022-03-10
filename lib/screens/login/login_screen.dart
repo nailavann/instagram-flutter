@@ -33,11 +33,11 @@ class _LoginScreenState extends State<LoginScreen> {
         .loginUser(_emailController.text, _passwordController.text, context);
 
     if (res == "success") {
-      Navigator.pushReplacement(context, MaterialPageRoute(
+      Navigator.pushAndRemoveUntil(context, MaterialPageRoute(
         builder: (context) {
           return const HomeScreen();
         },
-      ));
+      ), (route) => false);
     }
 
     setState(() {
@@ -57,8 +57,8 @@ class _LoginScreenState extends State<LoginScreen> {
             child:
                 Column(mainAxisAlignment: MainAxisAlignment.center, children: [
               SvgPicture.asset(
-                "assets/img/Instagram_logo.svg",
-                height: 64,
+                "assets/img/projectlogo.svg",
+                height: 150,
                 color: Colors.white,
               ),
               const SizedBox(
